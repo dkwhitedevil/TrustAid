@@ -1,5 +1,5 @@
 import { Building, Heart, Shield, User } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -14,24 +14,6 @@ const LoginPage: React.FC = () => {
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user && user.user_metadata?.role) {
-      switch (user.user_metadata.role) {
-        case 'donor':
-          navigate('/donor');
-          break;
-        case 'beneficiary':
-          navigate('/beneficiary');
-          break;
-        case 'ngo':
-          navigate('/ngo');
-          break;
-        default:
-          navigate('/');
-      }
-    }
-  }, [user, navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -40,9 +22,8 @@ const LoginPage: React.FC = () => {
     try {
       if (isLogin) {
         await login(email, password);
-        // Check user role from context after login
-        let attempts = 0;
-        const checkRoleAndRedirect = () => {
+        // Wait for user context to update, then redirect based on user role
+        const checkAndRedirect = () => {
           if (user && user.user_metadata?.role) {
             switch (user.user_metadata.role) {
               case 'donor':
@@ -58,14 +39,18 @@ const LoginPage: React.FC = () => {
                 navigate('/');
                 return;
             }
-          } else if (attempts < 5) {
-            attempts++;
-            setTimeout(checkRoleAndRedirect, 200);
           } else {
-            navigate('/');
+            // If user or role not ready, try again shortly (max 1s)
+            if (checkAndRedirect.attempts < 5) {
+              checkAndRedirect.attempts++;
+              setTimeout(checkAndRedirect, 200);
+            } else {
+              navigate('/');
+            }
           }
         };
-        checkRoleAndRedirect();
+        checkAndRedirect.attempts = 0;
+        checkAndRedirect();
       } else {
         await register(email, password, name, role);
         // Navigate to appropriate dashboard after registration

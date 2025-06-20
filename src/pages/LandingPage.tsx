@@ -1,8 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { Shield, Brain, Link as LinkIcon, Users, CheckCircle, TrendingUp } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const features = [
     {
       icon: Brain,
@@ -33,6 +37,27 @@ const LandingPage: React.FC = () => {
     { label: 'Success Rate', value: '98.7%' }
   ];
 
+  const handleGetStarted = () => {
+    if (user && user.user_metadata?.role) {
+      switch (user.user_metadata.role) {
+        case 'donor':
+          navigate('/donor');
+          return;
+        case 'beneficiary':
+          navigate('/beneficiary');
+          return;
+        case 'ngo':
+          navigate('/ngo');
+          return;
+        default:
+          navigate('/');
+          return;
+      }
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -50,18 +75,18 @@ const LandingPage: React.FC = () => {
               blockchain transparency, and NGO partnerships to ensure your donations reach those who need them most.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/login"
+              <button
+                onClick={handleGetStarted}
                 className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Get Started
-              </Link>
-              <Link
-                to="/view-requests"
+              </button>
+              <button
+                onClick={() => navigate('/view-requests')}
                 className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:border-gray-400 transition-all duration-200"
               >
                 View Requests
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -117,12 +142,12 @@ const LandingPage: React.FC = () => {
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Join thousands of donors, NGOs, and beneficiaries creating positive impact through transparent giving.
           </p>
-          <Link
-            to="/login"
+          <button
+            onClick={handleGetStarted}
             className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Start Your Journey
-          </Link>
+          </button>
         </div>
       </section>
     </div>

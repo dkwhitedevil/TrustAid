@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { Building, Heart, Shield, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, User, Building, Heart } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
@@ -8,38 +8,83 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('donor');
+  const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, register } = useAuth();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { login, register, user } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (isLogin) {
-        await login(email, password, role);
-      } else {
-        await register(email, password, name, role);
-      }
-      
-      // Navigate to appropriate dashboard
-      switch (role) {
+  useEffect(() => {
+    if (user && user.user_metadata?.role) {
+      switch (user.user_metadata.role) {
+        case 'donor':
+          navigate('/donor');
+          break;
         case 'beneficiary':
           navigate('/beneficiary');
           break;
         case 'ngo':
           navigate('/ngo');
           break;
-        case 'donor':
-          navigate('/donor');
-          break;
         default:
           navigate('/');
       }
-    } catch (error) {
-      console.error('Authentication error:', error);
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      if (isLogin) {
+        await login(email, password);
+        // Check user role from context after login
+        let attempts = 0;
+        const checkRoleAndRedirect = () => {
+          if (user && user.user_metadata?.role) {
+            switch (user.user_metadata.role) {
+              case 'donor':
+                navigate('/donor');
+                return;
+              case 'beneficiary':
+                navigate('/beneficiary');
+                return;
+              case 'ngo':
+                navigate('/ngo');
+                return;
+              default:
+                navigate('/');
+                return;
+            }
+          } else if (attempts < 5) {
+            attempts++;
+            setTimeout(checkRoleAndRedirect, 200);
+          } else {
+            navigate('/');
+          }
+        };
+        checkRoleAndRedirect();
+      } else {
+        await register(email, password, name, role);
+        // Navigate to appropriate dashboard after registration
+        switch (role) {
+          case 'beneficiary':
+            navigate('/beneficiary');
+            break;
+          case 'ngo':
+            navigate('/ngo');
+            break;
+          case 'donor':
+            navigate('/donor');
+            break;
+          default:
+            navigate('/');
+        }
+      }
+    } catch (error: any) {
+      setErrorMsg(error.message || 'Authentication error');
     } finally {
       setLoading(false);
     }
@@ -83,6 +128,11 @@ const LoginPage: React.FC = () => {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {errorMsg && (
+            <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-2 text-center">
+              {errorMsg}
+            </div>
+          )}
           <div className="space-y-4">
             {!isLogin && (
               <div>
@@ -101,7 +151,7 @@ const LoginPage: React.FC = () => {
                 />
               </div>
             )}
-            
+
             <div>
               <label htmlFor="email" className="sr-only">
                 Email address
@@ -117,7 +167,7 @@ const LoginPage: React.FC = () => {
                 placeholder="Email address"
               />
             </div>
-            
+
             <div>
               <label htmlFor="password" className="sr-only">
                 Password
@@ -134,38 +184,41 @@ const LoginPage: React.FC = () => {
               />
             </div>
 
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">Select your role:</label>
-              <div className="grid gap-3">
-                {roles.map((roleOption) => (
-                  <label key={roleOption.id} className="cursor-pointer">
-                    <input
-                      type="radio"
-                      name="role"
-                      value={roleOption.id}
-                      checked={role === roleOption.id}
-                      onChange={(e) => setRole(e.target.value)}
-                      className="sr-only"
-                    />
-                    <div className={`p-4 rounded-lg border-2 transition-all ${
-                      role === roleOption.id 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg ${roleOption.color}`}>
-                          <roleOption.icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-900">{roleOption.name}</div>
-                          <div className="text-sm text-gray-500">{roleOption.description}</div>
+            {/* Only show role selection when registering */}
+            {!isLogin && (
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-700">Select your role:</label>
+                <div className="grid gap-3">
+                  {roles.map((roleOption) => (
+                    <label key={roleOption.id} className="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="role"
+                        value={roleOption.id}
+                        checked={role === roleOption.id}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="sr-only"
+                      />
+                      <div className={`p-4 rounded-lg border-2 transition-all ${
+                        role === roleOption.id 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${roleOption.color}`}>
+                            <roleOption.icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">{roleOption.name}</div>
+                            <div className="text-sm text-gray-500">{roleOption.description}</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </label>
-                ))}
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div>

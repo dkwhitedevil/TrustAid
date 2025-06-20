@@ -1,15 +1,15 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import { AuthProvider } from './contexts/AuthContext';
+import BeneficiaryDashboard from './pages/BeneficiaryDashboard';
+import DonationTracker from './pages/DonationTracker';
+import DonorDashboard from './pages/DonorDashboard';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
-import BeneficiaryDashboard from './pages/BeneficiaryDashboard';
 import NGODashboard from './pages/NGODashboard';
-import DonorDashboard from './pages/DonorDashboard';
+import ProfilePage from './pages/ProfilePage';
 import RequestAid from './pages/RequestAid';
 import ViewRequests from './pages/ViewRequests';
-import DonationTracker from './pages/DonationTracker';
 
 function App() {
   return (
@@ -26,6 +26,7 @@ function App() {
             <Route path="/request-aid" element={<RequestAid />} />
             <Route path="/view-requests" element={<ViewRequests />} />
             <Route path="/donations/:id" element={<DonationTracker />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </div>
       </Router>

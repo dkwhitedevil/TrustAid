@@ -7,6 +7,7 @@ import DonorDashboard from './pages/DonorDashboard';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import NGODashboard from './pages/NGODashboard';
+import OtpVerification from './pages/OtpVerification';
 import ProfilePage from './pages/ProfilePage';
 import RequestAid from './pages/RequestAid';
 import ViewRequests from './pages/ViewRequests';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/view-requests" element={<ViewRequests />} />
             <Route path="/donations/:id" element={<DonationTracker />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/otp-verification" element={<OtpVerification />} />
           </Routes>
         </div>
       </Router>

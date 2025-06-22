@@ -52,24 +52,13 @@ const LoginPage: React.FC = () => {
         checkAndRedirect.attempts = 0;
         checkAndRedirect();
       } else {
-        await register(email, password, name, role);
-        // Navigate to appropriate dashboard after registration
-        switch (role) {
-          case 'beneficiary':
-            navigate('/beneficiary');
-            break;
-          case 'ngo':
-            navigate('/ngo');
-            break;
-          case 'donor':
-            navigate('/donor');
-            break;
-          default:
-            navigate('/');
-        }
+        // Instead of registering here, pass details to OTP screen
+        navigate('/otp-verification', {
+          state: { email, password, name, role }
+        });
       }
     } catch (error: any) {
-      setErrorMsg(error.message || 'Authentication error');
+      setErrorMsg(error.message || 'Invalid username or password');
     } finally {
       setLoading(false);
     }

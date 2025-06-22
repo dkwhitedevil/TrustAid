@@ -72,12 +72,11 @@ const OTPVerification: React.FC = () => {
       if (!email) throw new Error('Email is required for OTP verification.');
       // Use Supabase to verify the OTP (email confirmation)
       const { error } = await supabase.auth.verifyOtp({
-        email: email, // ensure email is a string
+        email: email,
         token: otpCode,
-        type: 'signup',
+        type: 'email', // Correct type for email OTP
       });
       if (error) throw error;
-      // Now register the user in your DB (if needed)
       await register(email ?? '', password ?? '', name ?? '', role ?? '');
       setIsVerified(true);
       setTimeout(() => {
@@ -95,8 +94,12 @@ const OTPVerification: React.FC = () => {
     setIsResending(true);
     setCanResend(false);
     setTimeLeft(60);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      if (!email) throw new Error('Email is required to resend OTP.');
+      await supabase.auth.signInWithOtp({ email });
+    } catch (err: any) {
+      alert(err.message || 'Failed to resend OTP.');
+    }
     setIsResending(false);
   };
 

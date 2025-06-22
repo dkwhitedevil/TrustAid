@@ -2,6 +2,7 @@ import { Building, Heart, Shield, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../supabaseClient';
 
 const LoginPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -52,10 +53,17 @@ const LoginPage: React.FC = () => {
         checkAndRedirect.attempts = 0;
         checkAndRedirect();
       } else {
-        // Instead of registering here, pass details to OTP screen
-        navigate('/otp-verification', {
-          state: { email, password, name, role }
+        // Call Supabase signUp to trigger OTP email
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { name, role },
+            emailRedirectTo: `${window.location.origin}/login`
+          }
         });
+        if (error) throw error;
+        navigate('/otp-verification', { state: { email, password, name, role } });
       }
     } catch (error: any) {
       setErrorMsg(error.message || 'Invalid username or password');

@@ -77,7 +77,6 @@ const OTPVerification: React.FC = () => {
         type: 'email', // Correct type for email OTP
       });
       if (error) throw error;
-      await register(email ?? '', password ?? '', name ?? '', role ?? '');
       setIsVerified(true);
       setTimeout(() => {
         navigate('/login', { state: { verified: true } });

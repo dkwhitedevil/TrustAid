@@ -1,11 +1,17 @@
 import { LogOut, Shield, User } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [displayUser, setDisplayUser] = useState(user);
+
+  // Only update displayUser after login completes (user context changes)
+  useEffect(() => {
+    setDisplayUser(user);
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -24,7 +30,7 @@ const Navbar: React.FC = () => {
           </Link>
 
           <div className="flex items-center space-x-4">
-            {user ? (
+            {displayUser ? (
               <>
                 <div className="flex items-center space-x-2">
                   {/* Profile button */}
@@ -37,14 +43,14 @@ const Navbar: React.FC = () => {
                     <User className="h-5 w-5 text-gray-600" />
                   </button>
                   <span className="text-sm font-medium text-gray-700">
-                    {user.user_metadata?.full_name || user.email}
+                    {displayUser.user_metadata?.full_name || displayUser.email}
                   </span>
-                  <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
-                    {user.user_metadata?.role
-                      ? user.user_metadata.role.charAt(0).toUpperCase() +
-                        user.user_metadata.role.slice(1)
-                      : ''}
-                  </span>
+                  {displayUser.user_metadata?.role && (
+                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-semibold border border-blue-300">
+                      {displayUser.user_metadata.role.charAt(0).toUpperCase() +
+                        displayUser.user_metadata.role.slice(1)}
+                    </span>
+                  )}
                 </div>
                 <button
                   onClick={handleLogout}

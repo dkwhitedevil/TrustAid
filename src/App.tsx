@@ -11,6 +11,7 @@ import OtpVerification from './pages/OtpVerification';
 import ProfilePage from './pages/ProfilePage';
 import RequestAid from './pages/RequestAid';
 import ViewRequests from './pages/ViewRequests';
+import OauthCallback from './pages/OauthCallback';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/donations/:id" element={<DonationTracker />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/otp-verification" element={<OtpVerification />} />
+            <Route path="/oauth-callback" element={<OauthCallback />} />
           </Routes>
         </div>
       </Router>

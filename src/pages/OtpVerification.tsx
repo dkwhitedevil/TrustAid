@@ -74,7 +74,7 @@ const OTPVerification: React.FC = () => {
       const { error } = await supabase.auth.verifyOtp({
         email: email,
         token: otpCode,
-        type: 'email', // Correct type for email OTP
+        type: 'magiclink', // Correct type for email OTP
       });
       if (error) throw error;
       setIsVerified(true);
@@ -90,13 +90,17 @@ const OTPVerification: React.FC = () => {
   };
 
   const handleResend = async () => {
+    console.log('Resend OTP triggered');
     setIsResending(true);
     setCanResend(false);
     setTimeLeft(60);
     try {
       if (!email) throw new Error('Email is required to resend OTP.');
-      await supabase.auth.signInWithOtp({ email });
+      console.log('Attempting to send OTP to:', email);
+      const result = await supabase.auth.signInWithOtp({ email });
+      console.log('OTP send result:', result);
     } catch (err: any) {
+      console.error('Error resending OTP:', err);
       alert(err.message || 'Failed to resend OTP.');
     }
     setIsResending(false);

@@ -7,6 +7,7 @@ const OauthCallback = () => {
   const location = useLocation();
 
   useEffect(() => {
+    console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
     const handleCallback = async () => {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) {

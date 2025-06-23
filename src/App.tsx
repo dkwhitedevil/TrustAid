@@ -17,7 +17,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+        <div className="min-h-screen bg-gray-900">
           <Navbar />
           <Routes>
             <Route path="/" element={<LandingPage />} />

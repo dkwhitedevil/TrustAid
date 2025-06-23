@@ -65,20 +65,19 @@ const Navbar: React.FC = () => {
                     <User className="relative h-5 w-5 text-gray-300 group-hover:text-white transition-colors duration-300" />
                   </button>
                   
-                  <div className="flex flex-col items-end">
-                    <span className="text-sm font-medium text-white">
-                      {displayUser.user_metadata?.full_name || displayUser.email}
+                 <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-white">
+                    {displayUser.user_metadata?.full_name || displayUser.email}
+                  </span>
+
+                  {displayUser.user_metadata?.role && (
+                    <span className="relative text-xs px-3 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-full font-semibold border border-cyan-400/30 shadow-lg">
+                      {displayUser.user_metadata.role.charAt(0).toUpperCase() +
+                        displayUser.user_metadata.role.slice(1)}
                     </span>
-                    {displayUser.user_metadata?.role && (
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full blur-sm opacity-30"></div>
-                        <span className="relative text-xs px-3 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-full font-semibold border border-cyan-400/30 shadow-lg">
-                          {displayUser.user_metadata.role.charAt(0).toUpperCase() +
-                            displayUser.user_metadata.role.slice(1)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
+                </div>
+
                 </div>
                 
                 <button

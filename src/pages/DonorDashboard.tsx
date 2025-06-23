@@ -1,6 +1,6 @@
+import { ExternalLink, Filter, Heart, Search, Shield, TrendingUp } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, TrendingUp, Shield, Search, Filter, ExternalLink } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const DonorDashboard: React.FC = () => {
@@ -103,10 +103,10 @@ const DonorDashboard: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="pt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Donor Dashboard</h1>
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-white mb-2">Donor Dashboard</h1>
         <p className="text-gray-600">Discover verified requests and track your impact</p>
       </div>
 

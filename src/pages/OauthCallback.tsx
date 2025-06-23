@@ -41,14 +41,18 @@ const OauthCallback = () => {
         }
         // If not registered, upsert
         if (role && user.user_metadata?.role !== role) {
-          await supabase.auth.updateUser({ data: { ...user.user_metadata, role } });
+          const { error: metaError } = await supabase.auth.updateUser({ data: { ...user.user_metadata, role } });
+          if (metaError) console.error('USER METADATA UPDATE failed →', metaError);
         }
-        await supabase.from('profiles').upsert({
+        console.log('pending_google_role', role);
+        const { data: upsertData, error: upsertError } = await supabase.from('profiles').upsert({
           id: user.id,
           email: user.email,
           name: user.user_metadata?.name || user.user_metadata?.full_name || '',
           role,
         });
+        if (upsertError) console.error('UPSERT failed →', upsertError);
+        else console.log('UPSERT success →', upsertData);
         if (role) localStorage.setItem('last_google_role', role);
       } else if (isSignIn) {
         // Sign in: check if user is registered

@@ -18,7 +18,7 @@ const OauthCallback = () => {
       const isSignIn = params.get('signin') === '1';
       let role = localStorage.getItem('pending_google_role');
       // Check if profile already exists
-      const { data: profile, error: profileError } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+      const { data: profile, error: profileError } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
       if (isRegister) {
         if (profile && profile.role) {
           localStorage.setItem('last_google_role', profile.role);
@@ -45,14 +45,13 @@ const OauthCallback = () => {
           if (metaError) console.error('USER METADATA UPDATE failed →', metaError);
         }
         console.log('pending_google_role', role);
-        const { data: upsertData, error: upsertError } = await supabase.from('profiles').upsert({
+        const { error: upsertErr } = await supabase.from('profiles').upsert({
           id: user.id,
           email: user.email,
           name: user.user_metadata?.name || user.user_metadata?.full_name || '',
           role,
         });
-        if (upsertError) console.error('UPSERT failed →', upsertError);
-        else console.log('UPSERT success →', upsertData);
+        if (upsertErr) console.error('UPSERT failed →', upsertErr);
         if (role) localStorage.setItem('last_google_role', role);
       } else if (isSignIn) {
         // Sign in: check if user is registered

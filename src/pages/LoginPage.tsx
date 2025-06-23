@@ -1,5 +1,5 @@
 import { Building, Heart, Shield, User } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 
 const LoginPage: React.FC = () => {
@@ -169,7 +169,9 @@ const LoginPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-gray-500">No role assigned. Please register first.</div>
+                <div className="flex flex-col items-center justify-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <span className="text-xs text-yellow-700">Please register first to continue with Google sign-in.</span>
+                </div>
               )
             )}
           </div>

@@ -7,11 +7,11 @@ import DonorDashboard from './pages/DonorDashboard';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import NGODashboard from './pages/NGODashboard';
+import OauthCallback from './pages/OauthCallback';
 import OtpVerification from './pages/OtpVerification';
 import ProfilePage from './pages/ProfilePage';
 import RequestAid from './pages/RequestAid';
 import ViewRequests from './pages/ViewRequests';
-import OauthCallback from './pages/OauthCallback';
 
 function App() {
   return (
